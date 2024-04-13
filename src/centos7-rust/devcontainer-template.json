@@ -1,0 +1,21 @@
+{
+    "id": "centos7-rust",
+    "version": "1.0.0",
+    "name": "CentOS7 Rust",
+    "description": "A Template to setup rust env on CentOS7",
+    "documentationURL": "https://github.com/lhyzf/devcontainers-template/tree/main/src/centos7-rust",
+    "licenseURL": "https://github.com/lhyzf/devcontainers-template/blob/main/LICENSE",
+    "options": {
+        "cmakeVersion": {
+            "type": "string",
+            "description": "CMake version:",
+            "proposals": [
+                "3.29.2"
+            ],
+            "default": "3.29.2"
+        }
+    },
+    "platforms": [
+        "Any"
+    ]
+}

@@ -1,0 +1,49 @@
+# https://docs.docker.com/reference/dockerfile/
+FROM centos:7
+
+# Install rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -q -y
+
+# Set Rust Crates Registry source
+# https://mirrors.ustc.edu.cn/help/crates.io-index.html
+RUN mkdir -vp ${CARGO_HOME:-$HOME/.cargo} \
+  && ( \
+  echo '[source.crates-io]'; \
+  echo 'replace-with = "ustc"'; \
+  echo ''; \
+  echo '[source.ustc]'; \
+  echo 'registry = "sparse+https://mirrors.ustc.edu.cn/crates.io-index/"'; \
+  ) >> ${CARGO_HOME:-$HOME/.cargo}/config
+
+RUN yum -y update \
+  && yum -y install \
+  wget \
+  make \
+  gcc \
+  gcc-c++ \
+  openssl-devel \
+  centos-release-scl-rh \
+  && yum -y update \
+  && yum -y install \
+  rh-git227 \
+  llvm-toolset-7.0-clang \
+  && yum clean all \
+  && echo '/opt/rh/llvm-toolset-7.0/root/usr/lib64' > /etc/ld.so.conf.d/clang.conf && ldconfig \
+  && ( \
+  # https://github.com/KyleMayes/clang-sys/tree/master?tab=readme-ov-file#environment-variables
+  echo 'export LIBCLANG_PATH="/opt/rh/llvm-toolset-7.0/root/usr/lib64"'; \
+  echo 'export CLANG_PATH="/opt/rh/llvm-toolset-7.0/root/usr/bin"'; \
+  echo 'source scl_source enable rh-git227'; \
+  ) >> ~/.bashrc
+
+# Install cmake
+# https://github.com/Kitware/CMake/releases
+RUN ( \
+  CMAKE_VERSION="${templateOption:cmakeVersion}"; \
+  echo "Downloading CMake ${CMAKE_VERSION}..."; \
+  wget -q -O /tmp/cmake_${CMAKE_VERSION}.sh \
+    https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-$(uname -m).sh; \
+  echo "Installing CMake..."; \
+  bash /tmp/cmake_${CMAKE_VERSION}.sh --skip-license --exclude-subdir --prefix=/usr; \
+  rm -rf /tmp/cmake_${CMAKE_VERSION}.sh; \
+  )
