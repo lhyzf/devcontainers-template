@@ -8,6 +8,7 @@ A Template to setup rust env on CentOS7
 | Options Id | Description | Type | Default Value |
 |-----|-----|-----|-----|
 | cmakeVersion | CMake version: | string | 3.29.2 |
+| rustCratesIndex | Rust crates index: | string | ustc |
 
 
 
