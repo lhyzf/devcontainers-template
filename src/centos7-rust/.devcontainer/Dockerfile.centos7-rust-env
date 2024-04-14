@@ -2,18 +2,7 @@
 FROM centos:7
 
 # Install rust
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -q -y
-
-# Set Rust Crates Registry source
-# https://mirrors.ustc.edu.cn/help/crates.io-index.html
-RUN mkdir -vp ${CARGO_HOME:-$HOME/.cargo} \
-  && ( \
-  echo '[source.crates-io]'; \
-  echo 'replace-with = "ustc"'; \
-  echo ''; \
-  echo '[source.ustc]'; \
-  echo 'registry = "sparse+https://mirrors.ustc.edu.cn/crates.io-index/"'; \
-  ) >> ${CARGO_HOME:-$HOME/.cargo}/config
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -q -y -c rust-analyzer
 
 RUN yum -y update \
   && yum -y install \
@@ -42,8 +31,22 @@ RUN ( \
   CMAKE_VERSION="${templateOption:cmakeVersion}"; \
   echo "Downloading CMake ${CMAKE_VERSION}..."; \
   wget -q -O /tmp/cmake_${CMAKE_VERSION}.sh \
-    https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-$(uname -m).sh; \
+  https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-$(uname -m).sh; \
   echo "Installing CMake..."; \
   bash /tmp/cmake_${CMAKE_VERSION}.sh --skip-license --exclude-subdir --prefix=/usr; \
   rm -rf /tmp/cmake_${CMAKE_VERSION}.sh; \
   )
+
+# Set Rust Crates Registry source
+# https://mirrors.ustc.edu.cn/help/crates.io-index.html
+RUN if [ "${templateOption:rustCratesIndex}" == "ustc" ]; then \
+  (mkdir -vp ${CARGO_HOME:-$HOME/.cargo}; \
+  ( \
+  echo '[source.crates-io]'; \
+  echo 'replace-with = "ustc"'; \
+  echo ''; \
+  echo '[source.ustc]'; \
+  echo 'registry = "sparse+https://mirrors.ustc.edu.cn/crates.io-index/"'; \
+  ) >> ${CARGO_HOME:-$HOME/.cargo}/config; \
+  ) \
+  fi

@@ -13,6 +13,15 @@
                 "3.29.2"
             ],
             "default": "3.29.2"
+        },
+        "rustCratesIndex": {
+            "type": "string",
+            "description": "Rust crates index:",
+            "proposals": [
+                "default",
+                "ustc"
+            ],
+            "default": "ustc"
         }
     },
     "platforms": [
