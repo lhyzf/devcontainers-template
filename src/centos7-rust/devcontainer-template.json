@@ -1,6 +1,6 @@
 {
     "id": "centos7-rust",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "name": "CentOS7 Rust",
     "description": "A Template to setup rust env on CentOS7",
     "documentationURL": "https://github.com/lhyzf/devcontainers-template/tree/main/src/centos7-rust",
